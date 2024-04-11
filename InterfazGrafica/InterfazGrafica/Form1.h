@@ -454,25 +454,60 @@ namespace CppCLRWinFormsProject {
 	private: System::Void txBoxContrasenna_TextChanged(System::Object^ sender, System::EventArgs^ e) {
 	}
 	private: System::Void buttonIniciarSesion_Click(System::Object^ sender, System::EventArgs^ e) {
-		txtIniciarSesion->Visible = false;
-		txBoxIniciarSesion->Visible = false;
-		txtIniciarSesion2->Visible = false;
-		txBoxContrasenna->Visible = false;
-		txtContrasenna->Visible = false;
-		buttonIniciarSesion->Visible = false;
-		noTienesCuenta->Visible = false;
 
-		// Mostrar controles de registro
-		buttonRegistar->Visible = false;
-		buttonVolverInicioSesion->Visible = false;
-		txtContrasennaR->Visible = false;
-		BoxContrasenaR->Visible = false;
-		txtRegistro2->Visible = false;
-		boxEmailR->Visible = false;
-		txtRegistro->Visible = false;
+		String^ exePath = System::Reflection::Assembly::GetExecutingAssembly()->Location;
+		// Obtener la carpeta del ejecutable
+		String^ exeDir = System::IO::Path::GetDirectoryName(exePath);
+		// Navegar tres niveles hacia arriba
+		String^ binDir = System::IO::Path::GetDirectoryName(exeDir); // Subir un nivel (salir de 'Debug' o 'Release')  
+		String^ projectDir = System::IO::Path::GetDirectoryName(binDir); // Subir otro nivel (salir de 'x64')  
+		String^ solutionDir = System::IO::Path::GetDirectoryName(projectDir); // Subir otro nivel (salir del directorio del proyecto)  
+		// Construir la ruta al archivo dentro de la carpeta 'pro', que está al mismo nivel que la solución 
+		String^ rutaArchivo = System::IO::Path::Combine(solutionDir, "pro\\Registros.txt");
 
-		txtSelectSensor->Visible = true;
-		comboBox1->Visible = true;
+
+		String^ email = txBoxIniciarSesion->Text;   
+		String^ contraseña = txBoxContrasenna->Text;   
+
+		 
+		StreamReader^ sr = gcnew StreamReader(rutaArchivo); 
+		String^ linea;
+		while ((linea = sr->ReadLine()) != nullptr) { 
+			array<String^>^ partes = linea->Split(',');
+			if (partes[0]==email&&partes[1]==contraseña) 
+			{
+				txBoxContrasenna->Visible = false;
+				txtIniciarSesion->Visible = false;
+				txBoxIniciarSesion->Visible = false;
+				txtIniciarSesion2->Visible = false;
+				txBoxContrasenna->Visible = false;
+				txtContrasenna->Visible = false;
+				buttonIniciarSesion->Visible = false;
+				noTienesCuenta->Visible = false;
+
+				// Mostrar controles de registro
+				buttonRegistar->Visible = false;
+				buttonVolverInicioSesion->Visible = false;
+				txtContrasennaR->Visible = false;
+				BoxContrasenaR->Visible = false;
+				txtRegistro2->Visible = false;
+				boxEmailR->Visible = false;
+				txtRegistro->Visible = false;
+
+				txtSelectSensor->Visible = true;
+				comboBox1->Visible = true;
+			}
+			else
+			{
+				MessageBox::Show("Los datos son incorrectos volver a intentar");
+				 txBoxIniciarSesion->Text= "";; 
+				 txBoxContrasenna->Text= "";; 
+			} 
+		}
+			
+
+
+		
 	}
 	private: System::Void noTienesCuenta_Click(System::Object^ sender, System::EventArgs^ e) {
 		txtIniciarSesion->Visible = false;
@@ -519,7 +554,32 @@ namespace CppCLRWinFormsProject {
 		String^ email = boxEmailR->Text;
 		String^ contraseña = BoxContrasenaR->Text;
 
+		// Obtener la ruta del ejecutable  
+		String^ exePath = System::Reflection::Assembly::GetExecutingAssembly()->Location; 
+		// Obtener la carpeta del ejecutable
+		String^ exeDir = System::IO::Path::GetDirectoryName(exePath); 
+		// Navegar tres niveles hacia arriba
+		String^ binDir = System::IO::Path::GetDirectoryName(exeDir); // Subir un nivel (salir de 'Debug' o 'Release')  
+		String^ projectDir = System::IO::Path::GetDirectoryName(binDir); // Subir otro nivel (salir de 'x64')  
+		String^ solutionDir = System::IO::Path::GetDirectoryName(projectDir); // Subir otro nivel (salir del directorio del proyecto)  
+		// Construir la ruta al archivo dentro de la carpeta 'pro', que está al mismo nivel que la solución 
+		String^ rutaArchivo = System::IO::Path::Combine(solutionDir, "pro\\Registros.txt"); 
+		
 
+		try {
+			
+			
+			StreamWriter^ escritor = gcnew StreamWriter(rutaArchivo); 
+			escritor->WriteLine(email+","+ contraseña);  
+			
+			escritor->Close(); 
+
+			MessageBox::Show("Información guardada en el archivo de texto.");
+		}
+		catch (Exception^ ex) {
+			// Manejar cualquier excepción que pueda ocurrir durante la escritura en el archivo
+			MessageBox::Show("Error al guardar la información en el archivo de texto: " + ex->Message);
+		}
 
 
 
@@ -530,23 +590,38 @@ namespace CppCLRWinFormsProject {
 	}
 
 	
+		   
+
 private: System::Void comboBox1_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) {
-	String^ datoSeleccionado = comboBox1->SelectedItem->ToString();
+
+	// Obtener la ruta del ejecutable  
+		String ^ exePath = System::Reflection::Assembly::GetExecutingAssembly()->Location;  
+	// Obtener la carpeta del ejecutable
+	String^ exeDir = System::IO::Path::GetDirectoryName(exePath);  
+	// Navegar tres niveles hacia arriba
+	String^ binDir = System::IO::Path::GetDirectoryName(exeDir); // Subir un nivel (salir de 'Debug' o 'Release') 
+	String^ projectDir = System::IO::Path::GetDirectoryName(binDir); // Subir otro nivel (salir de 'x64') 
+	String^ solutionDir = System::IO::Path::GetDirectoryName(projectDir); // Subir otro nivel (salir del directorio del proyecto) 
+	// Construir la ruta al archivo dentro de la carpeta 'pro', que está al mismo nivel que la solución
+	String^ rutaArchivo = System::IO::Path::Combine(solutionDir, "pro\\sensores.txt"); 
+
+
+	String^ datoSeleccionado = comboBox1->SelectedItem->ToString(); 
 
 	try {
-		String^ rutaArchivo = "C:\\Users\\Nienjeat\\Desktop\\pro\\sensores.txt";
+		
 
-		// Crear un objeto StreamReader para leer el archivo línea por línea
+		
 		StreamReader^ sr = gcnew StreamReader(rutaArchivo);
 
-		// Leer el archivo línea por línea hasta llegar al final
+		
 		String^ linea;
 		while ((linea = sr->ReadLine()) != nullptr) {
 			array<String^>^ partes = linea->Split(',');  
 			if (partes[0] == datoSeleccionado)
 			{
-				MessageBox::Show("Dato seleccionado: " + linea);
-				//Dar visibilidad al sensor elegido y mostrar los datos
+				//MessageBox::Show("Dato seleccionado: " + linea);
+				
 
 				txtNombre->Visible = true;
 				BoxNombre->Visible = true;
@@ -568,15 +643,25 @@ private: System::Void comboBox1_SelectedIndexChanged(System::Object^ sender, Sys
 				BoxHumedad->ReadOnly = true;
 				BoxHumedad->Text = partes[3]; 
 				int temperatura = Convert::ToInt32(partes[1]); 
+
+					String ^ exePath2 = System::Reflection::Assembly::GetExecutingAssembly()->Location;
+				// Obtener la carpeta del ejecutable
+				String^ exeDir2 = System::IO::Path::GetDirectoryName(exePath2);
+				// Navegar tres niveles hacia arriba
+				String^ binDir2 = System::IO::Path::GetDirectoryName(exeDir2); // Subir un nivel (salir de 'Debug' o 'Release')
+				String^ projectDir2 = System::IO::Path::GetDirectoryName(binDir2); // Subir otro nivel (salir de 'x64')
+				String^ solutionDir2 = System::IO::Path::GetDirectoryName(projectDir2); // Subir otro nivel (salir del directorio del proyecto)
+				// Construir la ruta al archivo dentro de la carpeta 'pro', que está al mismo nivel que la solución
+				String^ rutaArchivoAudio = System::IO::Path::Combine(solutionDir2, "pro\\Never give you up.wav"); 
 				if (temperatura>50) 
 				{
-					String^ rutaArchivoAudio = "C:\\Users\\Nienjeat\\Desktop\\pro\\Never give you up.wav"; 
+					
 
 					SoundPlayer^ reproductor = gcnew SoundPlayer(rutaArchivoAudio); 
 
 					// Reproducir el audio
 					reproductor->Play(); 
-					MessageBox::Show("La temperatura supera los 50, tiene una temperatura de : " + temperatura);
+					//MessageBox::Show("La temperatura supera los 50, tiene una temperatura de : " + temperatura);
 				}
 			}
 			
