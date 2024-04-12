@@ -302,7 +302,13 @@ namespace CppCLRWinFormsProject {
 			this->comboBox1->TabIndex = 16;
 			this->comboBox1->Visible = false;
 			this->comboBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &Form1::comboBox1_SelectedIndexChanged);
-			String^ rutaArchivo = "C:/Users/Nienjeat/Desktop/pro/sensores.txt";
+		
+			String^ exePath = System::Reflection::Assembly::GetExecutingAssembly()->Location;
+			String^ exeDir = System::IO::Path::GetDirectoryName(exePath);
+			String^ binDir = System::IO::Path::GetDirectoryName(exeDir);
+			String^ projectDir = System::IO::Path::GetDirectoryName(binDir); 
+			String^ solutionDir = System::IO::Path::GetDirectoryName(projectDir); 
+			String^ rutaArchivo = System::IO::Path::Combine(solutionDir, "pro\\sensores.txt");
 
 			try {
 				// Leer todas las líneas del archivo de texto  
@@ -575,6 +581,23 @@ namespace CppCLRWinFormsProject {
 			escritor->Close(); 
 
 			MessageBox::Show("Información guardada en el archivo de texto.");
+			buttonRegistar->Visible = false;
+			buttonVolverInicioSesion->Visible = false;
+			txtContrasennaR->Visible = false;
+			BoxContrasenaR->Visible = false;
+			txtRegistro2->Visible = false;
+			boxEmailR->Visible = false;
+			txtRegistro->Visible = false;
+
+			// Mostrar controles de inicio de sesión
+			txtIniciarSesion->Visible = true;
+			txBoxIniciarSesion->Visible = true;
+			txtIniciarSesion2->Visible = true;
+			txBoxContrasenna->Visible = true;
+			txtContrasenna->Visible = true;
+			buttonIniciarSesion->Visible = true;
+			noTienesCuenta->Visible = true;
+
 		}
 		catch (Exception^ ex) {
 			// Manejar cualquier excepción que pueda ocurrir durante la escritura en el archivo
