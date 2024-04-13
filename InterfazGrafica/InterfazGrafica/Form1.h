@@ -474,44 +474,58 @@ namespace CppCLRWinFormsProject {
 
 		String^ email = txBoxIniciarSesion->Text;   
 		String^ contraseña = txBoxContrasenna->Text;   
-
+		bool comprobador = false;
 		 
 		StreamReader^ sr = gcnew StreamReader(rutaArchivo); 
-		String^ linea;
+		String^ linea;   
+	
 		while ((linea = sr->ReadLine()) != nullptr) { 
 			array<String^>^ partes = linea->Split(',');
 			if (partes[0]==email&&partes[1]==contraseña) 
 			{
-				txBoxContrasenna->Visible = false;
-				txtIniciarSesion->Visible = false;
-				txBoxIniciarSesion->Visible = false;
-				txtIniciarSesion2->Visible = false;
-				txBoxContrasenna->Visible = false;
-				txtContrasenna->Visible = false;
-				buttonIniciarSesion->Visible = false;
-				noTienesCuenta->Visible = false;
-
-				// Mostrar controles de registro
-				buttonRegistar->Visible = false;
-				buttonVolverInicioSesion->Visible = false;
-				txtContrasennaR->Visible = false;
-				BoxContrasenaR->Visible = false;
-				txtRegistro2->Visible = false;
-				boxEmailR->Visible = false;
-				txtRegistro->Visible = false;
-
-				txtSelectSensor->Visible = true;
-				comboBox1->Visible = true;
+				comprobador = true; 
+				
+				
 			}
 			else
 			{
-				MessageBox::Show("Los datos son incorrectos volver a intentar");
-				 txBoxIniciarSesion->Text= "";; 
-				 txBoxContrasenna->Text= "";; 
+				comprobador == false;
 			} 
-		}
-			
 
+			
+		}
+		if (comprobador==true)
+		{
+			txBoxContrasenna->Visible = false;
+			txtIniciarSesion->Visible = false;
+			txBoxIniciarSesion->Visible = false;
+			txtIniciarSesion2->Visible = false;
+			txBoxContrasenna->Visible = false;
+			txtContrasenna->Visible = false;
+			buttonIniciarSesion->Visible = false;
+			noTienesCuenta->Visible = false;
+
+			// Mostrar controles de registro
+			buttonRegistar->Visible = false;
+			buttonVolverInicioSesion->Visible = false;
+			txtContrasennaR->Visible = false;
+			BoxContrasenaR->Visible = false;
+			txtRegistro2->Visible = false;
+			boxEmailR->Visible = false;
+			txtRegistro->Visible = false;
+
+			txtSelectSensor->Visible = true;
+			comboBox1->Visible = true;
+		}
+		else if(comprobador==false)
+		{
+			MessageBox::Show("Los datos son incorrectos volver a intentar");
+			txBoxIniciarSesion->Text = "";;
+			txBoxContrasenna->Text = "";;
+		}
+		
+			
+		sr->Close();  
 
 		
 	}
@@ -575,7 +589,8 @@ namespace CppCLRWinFormsProject {
 		try {
 			
 			
-			StreamWriter^ escritor = gcnew StreamWriter(rutaArchivo); 
+			StreamWriter^ escritor = gcnew StreamWriter(rutaArchivo, true);   
+			
 			escritor->WriteLine(email+","+ contraseña);  
 			
 			escritor->Close(); 
